@@ -67,7 +67,7 @@ def save_midi(outfile, notes, tempo):
 
     track = 0
     time = 0
-    midifile = MIDIFile(1, deinterleave=True)
+    midifile = MIDIFile(1)
 
     # Add track name and tempo.
     midifile.addTrackName(track, time, "MIDI TRACK")
@@ -183,7 +183,7 @@ def audio_to_midi_melodia(infile, outfile, bpm, smooth=0.25, minduration=0.1,
     notes = midi_to_notes(midi_pitch, fs, hop, smooth, minduration)
 
     # save note sequence to a midi file
-    print("Saving MIDI to disk...");
+    print("Saving MIDI to disk...")
     save_midi(outfile, notes, bpm)
 
     if savejams:
@@ -211,7 +211,6 @@ if __name__ == "__main__":
                         default=False, help="Also save output in JAMS format.")
 
     args = parser.parse_args()
-
 
     audio_to_midi_melodia(args.infile, args.outfile, args.bpm,
                           smooth=args.smooth, minduration=args.minduration,
