@@ -149,7 +149,7 @@ def hz2midi(hz):
     return midi
 
 
-def audio_to_midi_melodia(infile, outfile, bpm, smooth=0.25, minduration=0.1,
+def audio_to_midi_melodia(infile, outfile, bpm=None, smooth=0.25, minduration=0.1,
                           savejams=False):
 
     # define analysis parameters
@@ -159,6 +159,12 @@ def audio_to_midi_melodia(infile, outfile, bpm, smooth=0.25, minduration=0.1,
     # load audio using librosa
     print("Loading audio...")
     data, sr = librosa.load(infile, sr=fs, mono=True)
+
+    # estimate bpm using librosa and print
+    if not bpm:
+        print("Detecting BPM using librosa.beat.tempo()...")
+        bpm = librosa.beat.tempo(data, sr=sr)
+        print("BPM: " + bpm)
 
     # extract melody using melodia vamp plugin
     print("Extracting melody f0 with MELODIA...")
@@ -200,7 +206,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("infile", help="Path to input audio file.")
     parser.add_argument("outfile", help="Path for saving output MIDI file.")
-    parser.add_argument("bpm", type=int, help="Tempo of the track in BPM.")
+    parser.add_argument("--bpm", type=int, help="Tempo of the track in BPM.")
     parser.add_argument("--smooth", type=float, default=0.25,
                         help="Smooth the pitch sequence with a median filter "
                              "of the provided duration (in seconds).")
@@ -212,6 +218,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    audio_to_midi_melodia(args.infile, args.outfile, args.bpm,
+    audio_to_midi_melodia(args.infile, args.outfile, bpm=args.bpm,
                           smooth=args.smooth, minduration=args.minduration,
                           savejams=args.jams)
